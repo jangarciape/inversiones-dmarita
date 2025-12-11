@@ -1,0 +1,7 @@
+[build]
+  publish = "."
+
+[functions]
+  directory = "netlify/functions"
+
+# Redirects para API - las funciones definen sus propias rutas via config

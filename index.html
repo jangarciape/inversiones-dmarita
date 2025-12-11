@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Inversiones D'Marita</title>
+  <style>
+    body{font-family:Arial,Helvetica,sans-serif;margin:0;background:#f4f4f4}
+    header{background:#1b8f2e;color:white;padding:20px;text-align:center}
+    nav{background:#157225;padding:10px;text-align:center}
+    nav a{color:white;margin:0 12px;text-decoration:none;font-weight:700}
+    .hero{background:#0b6f20;color:white;padding:40px;text-align:center}
+    .container{max-width:1100px;margin:20px auto;padding:16px;background:#fff;border-radius:6px}
+    .productos{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+    .producto{border:1px solid #e0e0e0;padding:12px;border-radius:8px;text-align:center}
+    .producto img{width:100%;height:140px;object-fit:cover;border-radius:6px}
+    .btn{display:inline-block;padding:8px 12px;border-radius:6px;border:0;background:#1b8f2e;color:#fff;cursor:pointer}
+    #carrito-lista{list-style:none;padding-left:0}
+    .topbar{display:flex;justify-content:space-between;align-items:center;gap:12px}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Inversiones D'Marita</h1>
+    <p>Tu bodega y librería de confianza</p>
+  </header>
+
+  <nav class="topbar">
+    <div style="padding:8px 16px">
+      <a href="#productos">Productos</a>
+      <a href="#zona-productos">Zona</a>
+      <a href="#contacto">Contacto</a>
+    </div>
+    <div style="padding:8px 16px">
+      <span id="user-email">Invitado</span>
+      <button id="btn-login" class="btn" onclick="openLogin()">Ingresar</button>
+      <button id="btn-logout" class="btn" style="display:none" onclick="logout()">Salir</button>
+    </div>
+  </nav>
+
+  <div class="hero">
+    <h2>¡Todo lo que necesitas en un solo lugar!</h2>
+  </div>
+
+  <div class="container" id="productos">
+    <h2>Productos</h2>
+    <div id="productos-grid" class="productos"></div>
+  </div>
+
+  <div class="container" id="zona-productos">
+    <h2>Zona de Productos</h2>
+    <div id="zona-grid" class="productos"></div>
+  </div>
+
+  <div class="container" id="carrito">
+    <h2>Carrito de Compras</h2>
+    <ul id="carrito-lista"></ul>
+    <h3>Total: S/ <span id="carrito-total">0.00</span></h3>
+    <button class="btn" id="btn-checkout" onclick="checkout()">Pagar</button>
+  </div>
+
+  <div class="container" id="contacto">
+    <h2>Contacto</h2>
+    <p>Dirección: Tu ciudad - Perú</p>
+    <p>Horario: Lunes a Domingo, 8:00 AM - 10:00 PM</p>
+    <p>Teléfono: 999-999-999</p>
+  </div>
+
+  <!-- Simple modal for login/register -->
+  <div id="modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);align-items:center;justify-content:center">
+    <div style="background:white;padding:20px;border-radius:8px;width:320px">
+      <h3 id="modal-title">Ingresar</h3>
+      <input id="email" placeholder="email" style="width:100%;padding:8px;margin-bottom:8px"/><br/>
+      <input id="password" type="password" placeholder="contraseña" style="width:100%;padding:8px;margin-bottom:8px"/><br/>
+      <button class="btn" id="modal-action" onclick="auth()">Entrar</button>
+      <button class="btn" style="background:#777;margin-left:8px" onclick="closeLogin()">Cancelar</button>
+      <p style="margin-top:8px;font-size:13px">¿No tienes cuenta? <a href="#" onclick="toggleMode()">Registrarme</a></p>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = 'http://localhost:8080/api';
+    let cart = [];
+    let total = 0;
+    let token = null;
+    let authMode = 'login';
+
+    // Load products from backend
+    async function loadProducts() {
+      try {
+        const res = await fetch(API_BASE + '/products');
+        const products = await res.json();
+        const grid = document.getElementById('productos-grid');
+        const zone = document.getElementById('zona-grid');
+        grid.innerHTML = '';
+        zone.innerHTML = '';
+        products.forEach(p => {
+          const el = createProductCard(p);
+          grid.appendChild(el);
+          zone.appendChild(createProductCard(p));
+        });
+      } catch (e) {
+        console.error('Error cargando productos', e);
+        // fallback: show static items if backend not running
+        const fallback = [
+          {id:1,name:'Golosinas',description:'Caramelos, chicles, chocolates.',price:2.5,image:'golosinas.jpg'},
+          {id:2,name:'Bebidas Energéticas',description:'Variedad de marcas',price:8.0,image:'bebidas.jpg'},
+          {id:3,name:'Artículos de Oficina',description:'Resmas, lapiceros',price:10.0,image:'oficina.jpg'}
+        ];
+        fallback.forEach(p => {
+          const el = createProductCard(p);
+          document.getElementById('productos-grid').appendChild(el);
+          document.getElementById('zona-grid').appendChild(createProductCard(p));
+        });
+      }
+    }
+
+    function createProductCard(p) {
+      const div = document.createElement('div');
+      div.className = 'producto';
+      div.innerHTML = `
+        <img src="${p.image || 'store.jpg'}" alt="${p.name}" />
+        <h3>${p.name}</h3>
+        <p>${p.description}</p>
+        <p><strong>Precio: S/ ${Number(p.price).toFixed(2)}</strong></p>
+        <button class="btn" onclick='addToCart(${JSON.stringify(p).replace(/'/g, "\'")})'>Agregar al carrito</button>
+      `;
+      return div;
+    }
+
+    function addToCart(p) {
+      cart.push(p);
+      const li = document.createElement('li');
+      li.textContent = `${p.name} - S/ ${Number(p.price).toFixed(2)}`;
+      document.getElementById('carrito-lista').appendChild(li);
+      total += Number(p.price);
+      document.getElementById('carrito-total').textContent = total.toFixed(2);
+    }
+
+    // Checkout: post cart to backend (requires login)
+    async function checkout() {
+      if (!token) {
+        alert('Debes ingresar para procesar el pago.');
+        openLogin();
+        return;
+      }
+      const items = cart.map(c => ({nombre: c.name, precio: c.price, cantidad:1, productId: c.id}));
+      try {
+        const res = await fetch(API_BASE + '/orders', {
+          method: 'POST',
+          headers: {'Content-Type':'application/json', 'Authorization':'Bearer ' + token},
+          body: JSON.stringify({items})
+        });
+        if (res.ok) {
+          alert('Pedido procesado correctamente.');
+          cart = []; total = 0;
+          document.getElementById('carrito-lista').innerHTML = '';
+          document.getElementById('carrito-total').textContent = '0.00';
+        } else {
+          const err = await res.json();
+          alert('Error: ' + (err.message || res.statusText));
+        }
+      } catch (e) {
+        console.error(e);
+        alert('No se pudo conectar al backend.');
+      }
+    }
+
+    // Auth modal
+    function openLogin(){ document.getElementById('modal').style.display='flex'; document.getElementById('modal-title').innerText='Ingresar'; authMode='login'; }
+    function closeLogin(){ document.getElementById('modal').style.display='none'; }
+    function toggleMode(){ authMode = authMode === 'login' ? 'register' : 'login'; document.getElementById('modal-title').innerText = authMode==='login'?'Ingresar':'Registrarse'; document.getElementById('modal-action').innerText = authMode==='login'?'Entrar':'Crear'; }
+
+    async function auth(){
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      if (!email || !password) { alert('Completa email y contraseña'); return; }
+      const path = authMode === 'login' ? '/auth/login' : '/auth/register';
+      try {
+        const res = await fetch(API_BASE + path, {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({email,password})
+        });
+        const data = await res.json();
+        if (!res.ok) { alert(data.message || 'Error'); return; }
+        // on login server returns { token, email }
+        if (data.token) {
+          token = data.token;
+          document.getElementById('user-email').innerText = data.email || email;
+          document.getElementById('btn-login').style.display = 'none';
+          document.getElementById('btn-logout').style.display = 'inline-block';
+          closeLogin();
+        } else {
+          alert('Registro correcto. Ingresa para continuar.');
+          toggleMode(); // switch to login
+        }
+      } catch (e) {
+        console.error(e);
+        alert('Error de conexión.');
+      }
+    }
+
+    function logout(){
+      token = null;
+      document.getElementById('user-email').innerText = 'Invitado';
+      document.getElementById('btn-login').style.display = 'inline-block';
+      document.getElementById('btn-logout').style.display = 'none';
+    }
+
+    // init
+    loadProducts();
+  </script>
+</body>
+</html>

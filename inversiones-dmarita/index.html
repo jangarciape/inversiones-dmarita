@@ -14,15 +14,16 @@
   </header>
 
   <nav class="topbar">
-    <div style="padding:8px 16px">
+    <div>
       <a href="#productos">Productos</a>
       <a href="#zona-productos">Zona</a>
+      <a href="#carrito">Carrito</a>
       <a href="#contacto">Contacto</a>
     </div>
-    <div style="padding:8px 16px">
+    <div>
       <span id="user-email">Invitado</span>
       <button id="btn-login" class="btn" onclick="openLogin()">Ingresar</button>
-      <button id="btn-logout" class="btn" style="display:none" onclick="logout()">Salir</button>
+      <button id="btn-logout" class="btn red" style="display:none" onclick="logout()">Salir</button>
     </div>
   </nav>
 
@@ -31,38 +32,42 @@
   </div>
 
   <div class="container" id="productos">
-    <h2>Productos</h2>
+    <h2>🛍️ Productos</h2>
     <div id="productos-grid" class="productos"></div>
   </div>
 
   <div class="container" id="zona-productos">
-    <h2>Zona de Productos</h2>
+    <h2>📦 Zona de Productos</h2>
     <div id="zona-grid" class="productos"></div>
   </div>
 
   <div class="container" id="carrito">
-    <h2>Carrito de Compras</h2>
+    <h2>🛒 Carrito de Compras</h2>
     <ul id="carrito-lista"></ul>
-    <h3>Total: S/ <span id="carrito-total">0.00</span></h3>
-    <button class="btn" id="btn-checkout" onclick="checkout()">Pagar</button>
+    <div class="total-section">
+      <h3>
+        <span>Total:</span>
+        <span>S/ <span id="carrito-total">0.00</span></span>
+      </h3>
+      <button class="btn" id="btn-checkout" onclick="checkout()" style="width:100%; margin-top:15px; padding:15px; font-size:1.1em;">Pagar</button>
+    </div>
   </div>
 
   <div class="container" id="contacto">
-    <h2>Contacto</h2>
-    <p>Dirección: Tu ciudad - Perú</p>
-    <p>Horario: Lunes a Domingo, 8:00 AM - 10:00 PM</p>
-    <p>Teléfono: 999-999-999</p>
+    <h2>📞 Contacto</h2>
+    <p>📍 Dirección: Tu ciudad - Perú</p>
+    <p>🕐 Horario: Lunes a Domingo, 8:00 AM - 10:00 PM</p>
+    <p>📱 Teléfono: 999-999-999</p>
   </div>
 
-  <!-- Modal Login/Register -->
   <div id="modal" class="modal">
     <div class="modal-content">
       <h3 id="modal-title">Ingresar</h3>
-      <input id="email" placeholder="email" />
-      <input id="password" type="password" placeholder="contraseña" />
-      <button class="btn" id="modal-action" onclick="auth()">Entrar</button>
-      <button class="btn cancel" onclick="closeLogin()">Cancelar</button>
-      <p>¿No tienes cuenta? <a href="#" onclick="toggleMode()">Registrarme</a></p>
+      <input id="email" type="email" placeholder="Email" />
+      <input id="password" type="password" placeholder="Contraseña" />
+      <button class="btn" id="modal-action" onclick="auth()" style="width:100%; margin-bottom:10px;">Entrar</button>
+      <button class="btn cancel" onclick="closeLogin()" style="width:100%;">Cancelar</button>
+      <p>¿No tienes cuenta? <a href="#" onclick="toggleMode(); return false;">Registrarme</a></p>
     </div>
   </div>
 

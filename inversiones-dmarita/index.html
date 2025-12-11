@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Inversiones D'Marita</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <header>
+    <h1>Inversiones D'Marita</h1>
+    <p>Tu bodega y librería de confianza</p>
+  </header>
+
+  <nav class="topbar">
+    <div style="padding:8px 16px">
+      <a href="#productos">Productos</a>
+      <a href="#zona-productos">Zona</a>
+      <a href="#contacto">Contacto</a>
+    </div>
+    <div style="padding:8px 16px">
+      <span id="user-email">Invitado</span>
+      <button id="btn-login" class="btn" onclick="openLogin()">Ingresar</button>
+      <button id="btn-logout" class="btn" style="display:none" onclick="logout()">Salir</button>
+    </div>
+  </nav>
+
+  <div class="hero">
+    <h2>¡Todo lo que necesitas en un solo lugar!</h2>
+  </div>
+
+  <div class="container" id="productos">
+    <h2>Productos</h2>
+    <div id="productos-grid" class="productos"></div>
+  </div>
+
+  <div class="container" id="zona-productos">
+    <h2>Zona de Productos</h2>
+    <div id="zona-grid" class="productos"></div>
+  </div>
+
+  <div class="container" id="carrito">
+    <h2>Carrito de Compras</h2>
+    <ul id="carrito-lista"></ul>
+    <h3>Total: S/ <span id="carrito-total">0.00</span></h3>
+    <button class="btn" id="btn-checkout" onclick="checkout()">Pagar</button>
+  </div>
+
+  <div class="container" id="contacto">
+    <h2>Contacto</h2>
+    <p>Dirección: Tu ciudad - Perú</p>
+    <p>Horario: Lunes a Domingo, 8:00 AM - 10:00 PM</p>
+    <p>Teléfono: 999-999-999</p>
+  </div>
+
+  <!-- Modal Login/Register -->
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <h3 id="modal-title">Ingresar</h3>
+      <input id="email" placeholder="email" />
+      <input id="password" type="password" placeholder="contraseña" />
+      <button class="btn" id="modal-action" onclick="auth()">Entrar</button>
+      <button class="btn cancel" onclick="closeLogin()">Cancelar</button>
+      <p>¿No tienes cuenta? <a href="#" onclick="toggleMode()">Registrarme</a></p>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

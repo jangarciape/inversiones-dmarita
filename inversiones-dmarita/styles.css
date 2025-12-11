@@ -1,0 +1,110 @@
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  background: #f4f4f4;
+}
+
+header {
+  background: #1b8f2e;
+  color: white;
+  padding: 20px;
+  text-align: center;
+}
+
+nav {
+  background: #157225;
+  padding: 10px;
+  text-align: center;
+}
+
+nav a {
+  color: white;
+  margin: 0 12px;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.hero {
+  background: #0b6f20;
+  color: white;
+  padding: 40px;
+  text-align: center;
+}
+
+.container {
+  max-width: 1100px;
+  margin: 20px auto;
+  padding: 16px;
+  background: #fff;
+  border-radius: 6px;
+}
+
+.productos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.producto {
+  border: 1px solid #e0e0e0;
+  padding: 12px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.producto img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.btn {
+  display: inline-block;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 0;
+  background: #1b8f2e;
+  color: white;
+  cursor: pointer;
+}
+
+#carrito-lista {
+  list-style: none;
+  padding-left: 0;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Modal */
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 320px;
+}
+
+.modal-content input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 8px;
+}
+
+.cancel {
+  background: #777;
+  margin-left: 8px;
+}
